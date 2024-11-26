@@ -32,10 +32,39 @@ export const registerUser = createAsyncThunk(
   }
 );
 
+export const loginUser = createAsyncThunk(
+  "auth/loginUser",
+  async (credentials: { email: string; password: string }, thunkAPI) => {
+    try {
+      const response = await fetch(backendURL + "/api/users/login/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(credentials),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        return thunkAPI.rejectWithValue(error.message || "Login failed");
+      }
+
+      const data = await response.json();
+      localStorage.setItem("accessToken", data.access); // Store access token
+      localStorage.setItem("refreshToken", data.refresh); // Store refresh token
+      return data; // Return the user and tokens
+    } catch (err) {
+      // Narrow the error type
+      if (err instanceof Error) {
+        return thunkAPI.rejectWithValue(err.message);
+      }
+      return thunkAPI.rejectWithValue("An unknown error occurred");
+    }
+  }
+);
 
 interface AuthState {
-  user: any;
-  token: string | null;
+  user: string | null;
+  accessToken: string | null;
+  refreshToken: string | null;
   loading: boolean;
   error: string | null;
   success: boolean;
@@ -43,37 +72,29 @@ interface AuthState {
 
 const initialState: AuthState = {
   user: null,
-  token: null,
+  accessToken: localStorage.getItem("accessToken"),
+  refreshToken: localStorage.getItem("refreshToken"),
   loading: false,
   error: null,
   success: false,
 };
 
 // Async thunks for API calls
-// Thunk for user login
-export const login = createAsyncThunk(
-  'auth/login',
-  async (credentials: { username: string; password: string }, { rejectWithValue }) => {
-    try {
-      const response = await axios.post(backendURL + '/api/users/login/', credentials);
-      return response.data; // Access token
-    } catch (error: any) {
-      return rejectWithValue(error.response.data);
-    }
-  }
-);
 
 export const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    clearError: (state) => {
-      state.error = null;
-    },
     resetState: () => initialState,
     logout: (state) => {
+      state.accessToken = null;
+      state.refreshToken = null;
       state.user = null;
-      state.token = null;
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+    },
+    clearError: (state) => {
+      state.error = null;
     },
   },
   extraReducers: (builder) => {
@@ -92,15 +113,17 @@ export const authSlice = createSlice({
         state.error = action.payload as string;
         state.success = false;
       })
-      .addCase(login.pending, (state) => {
+      .addCase(loginUser.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(login.fulfilled, (state, action) => {
+      .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
-        state.token = action.payload.access;
+        state.user = action.payload.user;
+        state.accessToken = action.payload.accessToken;
+        state.refreshToken = action.payload.refreshToken;
       })
-      .addCase(login.rejected, (state, action) => {
+      .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       });
