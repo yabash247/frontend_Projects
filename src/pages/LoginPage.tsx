@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../hooks/hooks';
 import { loginUser, clearError } from '../features/auth/authSlice';
+import '../styles/LoginPage.css'
 //import axios from 'axios';
 
 
@@ -45,38 +46,41 @@ const LoginPage: React.FC = () => {
 
   return (
     <div className="login-page">
-      <h2>Login</h2>
-      {error && (
+      <div className="login-card">
+        <h2 className="login-title">Login</h2>
+        {error && (
         <p className="error-message">
           {error} <button onClick={() => dispatch(clearError())}>Clear</button>
         </p>
       )}
       <form onSubmit={handleSubmit}>
-        <label>
-          Email:
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-        </label>
-        <label>
-          Password:
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-        </label>
-        <button type="submit" disabled={loading}>
+      <label className="login-label">Email</label>
+            <input
+            className="login-input"
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
+            <label className="login-label">Password</label>
+            <input
+            className="login-input"
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+            />
+            <button type="submit" disabled={loading}>
           {loading ? "Logging in..." : "Login"}
         </button>
       </form>
+      </div>
+
     </div>
+
+    
   );
 };
 
