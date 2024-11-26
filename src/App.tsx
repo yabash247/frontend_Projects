@@ -5,7 +5,7 @@ import Dashboard from './pages/Dashboard';
 import CompanyPage from './pages/CompanyPage';
 import CompanyView from "./components/CompanyView";
 import StaffPage from './pages/StaffPage';
-import AuthorityPage from './pages/AuthorityPage';
+import AuthorityPage from './pages/Authority/AuthorityPage';
 import StaffLevelPage from './pages/StaffLevelPage';
 import LoginPage from './pages/LoginPage';
 import LogoutPage from "./pages/LogoutPage";
