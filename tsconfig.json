@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+      "target": "ES6",                          // Target ECMAScript version
+      "lib": ["DOM", "DOM.Iterable", "ESNext"], // Include standard libraries
+      "allowJs": true,                          // Allow JavaScript files
+      "skipLibCheck": true,                     // Skip type checking of declaration files
+      "esModuleInterop": true,                  // Enable compatibility with ES6 modules
+      "allowSyntheticDefaultImports": true,     // Allow default imports from modules with no default export
+      "strict": true,                           // Enable all strict type-checking options
+      "forceConsistentCasingInFileNames": true, // Enforce consistent file name casing
+      "module": "ESNext",                       // Use ESNext module system
+      "moduleResolution": "Node",              // Use Node.js-style module resolution
+      "resolveJsonModule": true,                // Allow importing JSON files
+      "isolatedModules": true,                  // Ensure each file is treated as a module
+      "noEmit": true,                           // Don't emit compiled JavaScript files
+      "jsx": "react-jsx",                       // Use React's JSX transform
+      "paths": {
+        "@/*": ["./src/*"]                        // Configure absolute imports
+      }
+    },
+    "include": ["src"],                         // Include the src folder
+    "exclude": ["node_modules", "build"]        // Exclude node_modules and build folder
+  }
+  
