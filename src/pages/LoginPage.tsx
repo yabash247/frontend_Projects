@@ -37,9 +37,9 @@ const LoginPage: React.FC = () => {
     if (accessToken ) {
       // If the previous location was the login page, redirect to the dashboard
       if (from === "/login") {
-        navigate("/dashboard");
+        navigate("/dashboard", { replace: true });
       } else {
-        navigate(from);
+        navigate(from, { replace: true });
       }
     }
   }, [accessToken , navigate, from]);

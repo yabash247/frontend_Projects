@@ -7,6 +7,7 @@ import { backendURL } from "../utils/Constant"
 
 const Navbar: React.FC = () => {
   const [userName, setUserName] = useState<string | null>(null);
+  const [canGoForward, setCanGoForward] = useState<boolean>(false);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
@@ -37,7 +38,7 @@ const Navbar: React.FC = () => {
             "Content-Type": "application/json",
           },
         });
-  
+
         if (newAccessToken) {
           // Retry fetching user info with the new access token
           fetchUserInfo(newAccessToken);
@@ -58,17 +59,38 @@ const Navbar: React.FC = () => {
     } else {
       handleLogout(); // Logout if no access token is found
     }
+
+    const handlePopState = () => {
+      setCanGoForward(window.history.length > 1);
+    };
+
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
   }, []);
 
   return (
     <nav className="navbar">
       <div className="navbar-container">
+        <button onClick={() => navigate(-1)} className="nav-button">
+          Back
+        </button>
         <Link to="/" className="navbar-brand">
-          MyApp
+          Home
         </Link>
+        <button
+          onClick={() => navigate(1)}
+          className="nav-button"
+          disabled={!canGoForward}
+        >
+          Forward
+        </button>
         <ul className="navbar-links">
           {userName ? (
             <>
+
               <li>
                 <span className="navbar-user">Hello, {userName}!</span>
               </li>

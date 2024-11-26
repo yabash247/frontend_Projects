@@ -3,6 +3,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate  } from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
 import CompanyPage from './pages/CompanyPage';
+import CompanyView from "./components/CompanyView";
 import StaffPage from './pages/StaffPage';
 import AuthorityPage from './pages/AuthorityPage';
 import StaffLevelPage from './pages/StaffLevelPage';
@@ -29,6 +30,7 @@ const App = () => (
           <Route path="/" element={<Dashboard />} />
           <Route path="/Dashboard" element={<Dashboard />} />
           <Route path="/companies" element={<CompanyPage />} />
+          <Route path="/company/:id" element={<CompanyView />} />
           <Route path="/staff/:companyId" element={<StaffPage />} />
           <Route path="/authorities" element={<AuthorityPage />} />
           <Route path="/staff-levels" element={<StaffLevelPage />} />
