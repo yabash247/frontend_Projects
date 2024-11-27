@@ -5,7 +5,7 @@ import Dashboard from './pages/Dashboard';
 import CompanyPage from './pages/CompanyPage';
 import CompanyView from "./components/CompanyView";
 import StaffPage from './pages/StaffPage';
-import AuthorityPage from './pages/Authority/AuthorityPage';
+import AuthorityPage from './pages/Authority/AuthorityManagement';
 import StaffLevelPage from './pages/StaffLevelPage';
 import LoginPage from './pages/LoginPage';
 import LogoutPage from "./pages/LogoutPage";
@@ -32,7 +32,7 @@ const App = () => (
           <Route path="/companies" element={<CompanyPage />} />
           <Route path="/company/:id" element={<CompanyView />} />
           <Route path="/staff/:companyId" element={<StaffPage />} />
-          <Route path="/authorities" element={<AuthorityPage />} />
+          <Route path="/authorities/:companyId" element={<AuthorityPage />} />
           <Route path="/staff-levels" element={<StaffLevelPage />} />
 
           

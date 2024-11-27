@@ -1,8 +1,12 @@
+
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { backendURL } from "../utils/Constant";
 
 const CompanyView: React.FC = () => {
+
+  const navigate = useNavigate();
+
   const { id } = useParams<{ id: string }>();
   const [company, setCompany] = useState<any>(null);
 
@@ -47,10 +51,23 @@ const CompanyView: React.FC = () => {
 
   return (
     <div>
-      <h1>{company[0].name}</h1>
+      <h2>Company List</h2>
+      <h4>{company[0].name}</h4>
       <p>{company[0].description}</p>
       {/* Add more company details here */}
+      <div style={{ marginTop: '20px' }}>
+        <button onClick={() => navigate(`/authorities/${company[0].id}`)}>
+          Authority Settings
+        </button>
+      </div>
+      <div style={{ marginTop: '20px' }}>
+        <button onClick={() => navigate(`/company/${company.id}/staff`)}>
+          View Company Staff
+        </button>
+      </div>
+
     </div>
+
   );
 };
 
