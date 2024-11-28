@@ -12,6 +12,7 @@ import LogoutPage from "./pages/LogoutPage";
 import RegisterPage from "./pages/RegisterPage";
 import ErrorPage from "./pages/ErrorPage";
 import PrivateRoute from "./components/PrivateRoute";
+import StaffLevelComponent from './components/Staff/StaffLevelComponent';
 
 import Navbar from "./components/Navbar";
 
@@ -34,6 +35,7 @@ const App = () => (
           <Route path="/staff/:companyId" element={<StaffPage />} />
           <Route path="/authorities/:companyId" element={<AuthorityPage />} />
           <Route path="/staff-levels" element={<StaffLevelPage />} />
+          <Route path="/staff/levels/:companyId/:userId" element={<StaffLevelComponent />} />
 
           
 
