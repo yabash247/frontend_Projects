@@ -3,10 +3,12 @@
 import React, { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks/hooks';
 import { fetchAllCompanyStaff } from '../../features/staff/staffSlice';
-//import { fetchStaffLevels } from '../../features/staff/staffLevelSlice';
+import { fetchStaffLevel, clearStaffLevel } from '../../features/staff/staffLevelSlice';
 import { fetchUserById, selectUserById } from '../../features/user/userSlice';
+import { RootState } from '../../store';
 import { Table, TableBody, TableCell, TableHead, TableRow, Paper, CircularProgress } from '@mui/material';
 import { Link } from 'react-router-dom';
+import { frontendURL } from '../../utils/Constant';
 
 interface StaffTableProps {
   companyId: number;
@@ -16,7 +18,11 @@ const StaffTable: React.FC<StaffTableProps> = ({ companyId }) => {
   const dispatch = useAppDispatch();
   const { staffList, loading, error } = useAppSelector((state) => state.staff);
   const users = useAppSelector((state) => state.user.users);
-  const staffLevels = useAppSelector((state) => state.staffLevel.staffLevels);
+
+  // Get state from the staffLevel slice
+  const { staffLevels, loadings, errors } = useAppSelector((state: RootState) => state.staffLevel);
+
+  //const staffLevels = useAppSelector((state) => state.staffLevel.staffLevels);
 
   useEffect(() => {
     dispatch(fetchAllCompanyStaff(companyId));
@@ -28,9 +34,14 @@ const StaffTable: React.FC<StaffTableProps> = ({ companyId }) => {
         dispatch(fetchUserById(staff.user));
       }
       //dispatch(fetchStaffLevels({ userId: staff.user, companyId }));
+      if (companyId && staff.user) {
+        dispatch(fetchStaffLevel({ companyId: Number(companyId), userId: Number(staff.user) }));
+      }// Cleanup on unmount
+    return () => {
+      dispatch(clearStaffLevel());
+    };
     });
   }, [dispatch, staffList, users, companyId]);
-  console.log(staffLevels);
   
 
   if (loading) return <CircularProgress />;
@@ -50,12 +61,14 @@ const StaffTable: React.FC<StaffTableProps> = ({ companyId }) => {
         <TableBody>
           {staffList.map((staff) => {
             const user = users[staff.user];
+            // Cleanup on unmount
+            
             return (
               <TableRow key={staff.id}>
                 <TableCell> <Link to={`/staff/edit/${staff.id}/${companyId}`}>{user ? user.username : 'Loading...'}</Link></TableCell>
                 <TableCell>{staff.work_phone}</TableCell>
                 <TableCell>{user ? user.email : 'Loading...'}</TableCell>
-                <TableCell>{user ? user.username : 'Loading...'}</TableCell>
+                <TableCell><Link to={`${frontendURL}/staff/levels/${companyId}/${user ? user.id : 0}/`}>{staffLevels ? staffLevels.level : '0'}</Link></TableCell>
               </TableRow>
             );
           })}

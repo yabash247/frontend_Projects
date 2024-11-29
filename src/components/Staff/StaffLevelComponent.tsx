@@ -10,26 +10,24 @@ const StaffLevelComponent: React.FC = () => {
   // Get userId and companyId from URL parameters
   const { companyId, userId } = useParams<{ companyId: string; userId: string }>();
 
-  // Get accessToken from the auth slice
-  const accessToken = useSelector((state: RootState) => state.auth.accessToken);
 
   // Get state from the staffLevel slice
-  const { staffLevels, loading, error } = useSelector((state: RootState) => state.staffLevel);
+  const { staffLevels, loadings, errors } = useSelector((state: RootState) => state.staffLevel);
 
   useEffect(() => {
-    // Dispatch fetchStaffLevel if accessToken, companyId, and userId are available
-    if (accessToken && companyId && userId) {
-      dispatch(fetchStaffLevel({ companyId: Number(companyId), userId: Number(userId), accessToken }));
+    // Dispatch fetchStaffLevel if companyId, and userId are available
+    if (companyId && userId) {
+      dispatch(fetchStaffLevel({ companyId: Number(companyId), userId: Number(userId) }));
     }
 
     // Cleanup on unmount
     return () => {
       dispatch(clearStaffLevel());
     };
-  }, [dispatch, companyId, userId, accessToken]);
+  }, [dispatch, companyId, userId]);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error}</p>;
+  if (loadings) return <p>Loading...</p>;
+  if (errors) return <p>Error: {errors}</p>;
 
   return (
     <div>

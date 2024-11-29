@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Box, Button, Typography } from '@mui/material';
 import CompanyList from '../components/CompanyList';
+import AddCompanyForm from '../components/AddCompanyForm';
 import CompanyForm from '../components/CompanyForm';
 
 const CompanyPage = () => {
@@ -34,7 +35,7 @@ const CompanyPage = () => {
       {/* Form Section */}
       {isFormOpen && (
         <Box sx={{ mb: 3 }}>
-          <CompanyForm onClose={toggleForm} />
+          <AddCompanyForm onClose={toggleForm} />
         </Box>
       )}
 
