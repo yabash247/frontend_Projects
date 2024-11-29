@@ -4,6 +4,9 @@ import { Modal, Box, TextField, Button, CircularProgress, Typography } from '@mu
 import { addStaff, resetAddStaffState } from '../../features/staff/addStaffSlice';
 import { RootState, AppDispatch } from '../../store';
 
+import { DatePicker } from '@mui/x-date-pickers';
+import dayjs, { Dayjs } from 'dayjs';
+
 
 interface AddStaffModalProps {
   open: boolean;
@@ -19,9 +22,14 @@ const AddStaffModal: React.FC<AddStaffModalProps> = ({ open, onClose, company })
   const [user, setUserId] = useState<number>(0);
   const [work_phone, setWork_phone] = useState<string>('');
   const [work_email, setWork_email] = useState<string>('');
-  const [joined_company_date, setJoined_company_date] = useState<string>('');
+  const [joined_company_date, setJoined_company_date] = useState<Dayjs | null>(dayjs());
   const [comments, setComments] = useState<string>('');
+
+  const [workPhoneError, setWorkPhoneError] = useState<boolean>(false);
   
+  const handleDateChange = (date: Dayjs | null) => {
+    setJoined_company_date(date);
+  };
 
   useEffect(() => {
     if (success) {
@@ -32,6 +40,14 @@ const AddStaffModal: React.FC<AddStaffModalProps> = ({ open, onClose, company })
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validation for workPhone
+    if (!work_phone.trim()) {
+      setWorkPhoneError(true);
+      return;
+    }
+    setWorkPhoneError(false);
+
     if (accessToken) {
       dispatch(addStaff({ user, company, work_email, work_phone, joined_company_date, comments }));
     }
@@ -85,14 +101,11 @@ const AddStaffModal: React.FC<AddStaffModalProps> = ({ open, onClose, company })
           value={work_phone}
           onChange={(e) => setWork_phone(e.target.value)}
         />
-        <TextField
-          margin="normal"
-          fullWidth
-          id="joined_company_date"
-          label="Employed Date"
-          name="joined_company_date"
+        <DatePicker
+          label="Joined Company Date"
           value={joined_company_date}
-          onChange={(e) => setJoined_company_date(e.target.value)}
+          onChange={handleDateChange}
+          slotProps={{ textField: { fullWidth: true } }}
         />
         <TextField
           margin="normal"
