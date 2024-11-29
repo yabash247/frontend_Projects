@@ -1,26 +1,36 @@
 
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks/hooks';
 import { fetchAllCompanyStaff } from '../../features/staff/staffSlice';
 import { fetchStaffLevel, clearStaffLevel } from '../../features/staff/staffLevelSlice';
 import { fetchUserById, selectUserById } from '../../features/user/userSlice';
 import { RootState } from '../../store';
-import { Table, TableBody, TableCell, TableHead, TableRow, Paper, CircularProgress } from '@mui/material';
+import { Button, Table, TableBody, TableCell, TableHead, TableRow, Paper, CircularProgress } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { frontendURL } from '../../utils/Constant';
+import AddStaffModal from './AddStaffModal';
 
 interface StaffTableProps {
   companyId: number;
 }
 
 const StaffTable: React.FC<StaffTableProps> = ({ companyId }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const dispatch = useAppDispatch();
   const { staffList, loading, error } = useAppSelector((state) => state.staff);
   const users = useAppSelector((state) => state.user.users);
 
   // Get state from the staffLevel slice
   const { staffLevels, loadings, errors } = useAppSelector((state: RootState) => state.staffLevel);
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
 
   //const staffLevels = useAppSelector((state) => state.staffLevel.staffLevels);
 
@@ -49,6 +59,10 @@ const StaffTable: React.FC<StaffTableProps> = ({ companyId }) => {
 
   return (
     <Paper>
+      <Button variant="contained" color="primary" onClick={handleOpenModal}>
+        Add Staff
+      </Button>
+      <AddStaffModal open={isModalOpen} onClose={handleCloseModal} company={companyId} />
       <Table>
         <TableHead>
           <TableRow>

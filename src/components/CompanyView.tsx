@@ -33,7 +33,7 @@ const CompanyView: React.FC = () => {
         if (response.ok) {
           const data = await response.json();
           setCompany(data);
-          console.log(data);
+          //console.log(data);
         } else {
           console.error("Failed to fetch company details");
         }

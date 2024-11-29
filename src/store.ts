@@ -4,6 +4,7 @@ import companyReducer from './features/company/companySlice';
 import addCompanyReducer from './features/company/addCompanySlice';
 import staffReducer from './features/staff/staffSlice';
 import staffLevelReducer from './features/staff/staffLevelSlice';
+import addStaffReducer from './features/staff/addStaffSlice';
 import authReducer from './features/auth/authSlice'; // Import the auth slice
 import userReducer from './features/user/userSlice';
 // Import other slices as needed
@@ -13,9 +14,11 @@ export const store = configureStore({
     company: companyReducer,
     companies: addCompanyReducer,
     staff: staffReducer,
+    addStaff: addStaffReducer,
     staffLevel: staffLevelReducer, // Correctly add the staffLevel reducer
     auth: authReducer, // Add the auth slice
     user: userReducer, // Add the user reducer here
+
     // Add other reducers here
   },
 });
