@@ -1,6 +1,6 @@
 // src/App.tsx
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useParams  } from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
 import CompanyPage from './pages/CompanyPage';
 import CompanyView from "./components/CompanyView";
@@ -13,6 +13,7 @@ import RegisterPage from "./pages/RegisterPage";
 import ErrorPage from "./pages/ErrorPage";
 import PrivateRoute from "./components/PrivateRoute";
 import StaffLevelComponent from './components/Staff/StaffLevelComponent';
+import BranchList from './components/Company/BranchList';
 
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -38,6 +39,7 @@ const App = () => (
           <Route path="/" element={<Dashboard />} />
           <Route path="/Dashboard" element={<Dashboard />} />
           <Route path="/companies" element={<CompanyPage />} />
+          <Route path="/company/branches/:companyId" element={<BranchListWithToken />} />
           <Route path="/company/:id" element={<CompanyView />} />
           <Route path="/staff/:companyId" element={<StaffPage />} />
           <Route path="/authorities/:companyId" element={<AuthorityPage />} />
@@ -53,5 +55,15 @@ const App = () => (
     </Routes>
   </Router></LocalizationProvider>
 );
+
+const BranchListWithToken: React.FC = () => {
+  const { companyId } = useParams<{ companyId: string }>();
+
+  if (!companyId) {
+    return <p>Invalid company ID.</p>;
+  }
+
+  return <BranchList company={parseInt(companyId, 10)} />;
+};
 
 export default App;

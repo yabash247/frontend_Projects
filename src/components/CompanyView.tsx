@@ -65,6 +65,11 @@ const CompanyView: React.FC = () => {
           View Company Staff
         </button>
       </div>
+      <div style={{ marginTop: '20px' }}>
+        <button onClick={() => navigate(`/company/branches/${company[0].id}/`)}>
+          View Company Branches
+        </button>
+      </div>
 
     </div>
 

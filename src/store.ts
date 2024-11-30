@@ -2,6 +2,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import companyReducer from './features/company/companySlice';
 import addCompanyReducer from './features/company/addCompanySlice';
+import branchReducer from './features/company/branchSlice';
 import staffReducer from './features/staff/staffSlice';
 import staffLevelReducer from './features/staff/staffLevelSlice';
 import addStaffReducer from './features/staff/addStaffSlice';
@@ -13,6 +14,7 @@ export const store = configureStore({
   reducer: {
     company: companyReducer,
     companies: addCompanyReducer,
+    branches: branchReducer,
     staff: staffReducer,
     addStaff: addStaffReducer,
     staffLevel: staffLevelReducer, // Correctly add the staffLevel reducer
