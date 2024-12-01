@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchFarmDetails, clearError } from "../../../features/company/BSF/farmSlice";
 import { RootState, AppDispatch } from "../../../store";
@@ -10,7 +10,11 @@ import {
   CardContent,
   CircularProgress,
   Alert,
+  Button,
+  Modal,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import StaffMemberList from "../../Company/StaffMemberList";
 
 interface FarmDetailProps {
   companyId: number;
@@ -20,8 +24,10 @@ interface FarmDetailProps {
 
 const FarmDetail: React.FC<FarmDetailProps> = ({ companyId, farmId, appName }) => {
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate(); // To navigate programmatically
   const { farm, loading, error } = useSelector((state: RootState) => state.bsffarm);
   const accessToken = useSelector((state: RootState) => state.auth.accessToken);
+  const [openModal, setOpenModal] = useState(false);
 
   useEffect(() => {
     if (accessToken) {
@@ -32,6 +38,14 @@ const FarmDetail: React.FC<FarmDetailProps> = ({ companyId, farmId, appName }) =
       dispatch(clearError());
     };
   }, [dispatch, accessToken, companyId, farmId]);
+
+  const handleOpenModal = () => {
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+  };
 
   if (loading) return <CircularProgress />;
   if (error) return <Alert severity="error">{error}</Alert>;
@@ -68,9 +82,44 @@ const FarmDetail: React.FC<FarmDetailProps> = ({ companyId, farmId, appName }) =
             <Typography variant="body2" color="text.secondary">
               Address: {farm.associated_company.address}
             </Typography>
+            <Button
+              variant="contained"
+              color="primary"
+              sx={{ mt: 2 }}
+              onClick={handleOpenModal}
+            >
+              View Staff Members
+            </Button>
           </CardContent>
         </Card>
       )}
+
+      {/* Modal to display StaffMemberList */}
+      <Modal
+        open={openModal}
+        onClose={handleCloseModal}
+        aria-labelledby="staff-member-list-modal"
+        aria-describedby="modal-to-show-staff-members"
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "80%",
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            p: 4,
+            borderRadius: 1,
+          }}
+        >
+          <Typography variant="h6" component="h2" sx={{ mb: 2 }}>
+            Staff Members
+          </Typography>
+          <StaffMemberList />
+        </Box>
+      </Modal>
     </Box>
   );
 };

@@ -3,6 +3,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import companyReducer from './features/company/companySlice';
 import addCompanyReducer from './features/company/addCompanySlice';
 import branchReducer from './features/company/branchSlice';
+import staffMemberReducer from './features/company/staffMemberSlice'; // Import the staffMember slice
 import farmReducer  from './features/company/BSF/farmSlice';
 import staffReducer from './features/staff/staffSlice';
 import staffLevelReducer from './features/staff/staffLevelSlice';
@@ -18,6 +19,7 @@ export const store = configureStore({
     branches: branchReducer,
     bsffarm: farmReducer,
     staff: staffReducer,
+    staffMember: staffMemberReducer, // Add the staffMember reducer here
     addStaff: addStaffReducer,
     staffLevel: staffLevelReducer, // Correctly add the staffLevel reducer
     auth: authReducer, // Add the auth slice

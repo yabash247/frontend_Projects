@@ -14,6 +14,7 @@ import ErrorPage from "./pages/ErrorPage";
 import PrivateRoute from "./components/PrivateRoute";
 import StaffLevelComponent from './components/Staff/StaffLevelComponent';
 import BranchList from './components/Company/BranchList';
+import StaffMemberList from './components/Company/StaffMemberList';
 import FarmDetail from "./components/Company/BSF/FarmDetail";
 
 import { LocalizationProvider } from '@mui/x-date-pickers';
@@ -42,6 +43,7 @@ const App = () => (
           <Route path="/companies" element={<CompanyPage />} />
           <Route path="/company/branches/:companyId" element={<BranchListWithToken />} />
           <Route path="/company/branch/bsf/:companyId/:farmId/:appName" element={<FarmDetailWithParams />} />
+          <Route path="/staff-members/:appName/:companyId/:farmId/:userId?" element={<StaffMemberList />}/>
           <Route path="/company/:id" element={<CompanyView />} />
           <Route path="/staff/:companyId" element={<StaffPage />} />
           <Route path="/authorities/:companyId" element={<AuthorityPage />} />
