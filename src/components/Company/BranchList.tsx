@@ -1,8 +1,10 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchBranches, clearError } from "../../features/company/branchSlice";
+import { fetchFarmDetails } from "../../features/company/BSF/farmSlice";
 import { RootState, AppDispatch } from "../../store"
 import "../../styles/BranchList.css";
+import { Link } from "react-router-dom";
 
 interface BranchListProps {
   company: number; // Company ID passed as a prop
@@ -14,6 +16,8 @@ const BranchList: React.FC<BranchListProps> = ({ company }) => {
   const { branches, loading, error } = useSelector((state: RootState) => state.branches);
   const accessToken = useSelector((state: RootState) => state.auth.accessToken);
 
+  
+
   useEffect(() => {
     if (accessToken) {
       dispatch(fetchBranches({ accessToken, company }));
@@ -23,12 +27,30 @@ const BranchList: React.FC<BranchListProps> = ({ company }) => {
     };
   }, [dispatch, accessToken, company]);
 
+  const handleFarmClick = (farmId: number, appName?: string | undefined) => {
+    const validatedAppName = appName || "Unknown App"; // Fallback value for appName
+    console.log("Validated App Name:", validatedAppName); // Debugging log
+    if (!appName) {
+      console.error("appName is undefined"); // Debugging log
+      return;
+    }
+
+    if (accessToken) {
+      dispatch(
+        fetchFarmDetails({ accessToken, companyId: company, farmId, appName: validatedAppName })
+      );
+    }
+  };
+
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p className="error">{error}</p>;
 
   const sortedBranches = [...branches].sort((a, b) =>
     a.appName.localeCompare(b.appName)
   );
+
+ 
 
   return (
     <div className="branch-list">
@@ -45,9 +67,18 @@ const BranchList: React.FC<BranchListProps> = ({ company }) => {
           </tr>
         </thead>
         <tbody>
+          
           {sortedBranches.map((branch) => (
             <tr key={branch.id}>
-              <td>{branch.name}</td>
+              <td>
+                {/* Add clickable link */}
+                <Link
+              to={`/company/branch/${branch.appName}/${company}/${branch.branch_id}/${branch.appName}`}
+              
+            >
+              {branch.name}
+            </Link>
+              </td>
               <td>{branch.status}</td>
               <td>{branch.appName}</td>
               <td>{branch.modelName}</td>

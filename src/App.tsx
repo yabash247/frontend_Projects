@@ -14,6 +14,7 @@ import ErrorPage from "./pages/ErrorPage";
 import PrivateRoute from "./components/PrivateRoute";
 import StaffLevelComponent from './components/Staff/StaffLevelComponent';
 import BranchList from './components/Company/BranchList';
+import FarmDetail from "./components/Company/BSF/FarmDetail";
 
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -40,6 +41,7 @@ const App = () => (
           <Route path="/Dashboard" element={<Dashboard />} />
           <Route path="/companies" element={<CompanyPage />} />
           <Route path="/company/branches/:companyId" element={<BranchListWithToken />} />
+          <Route path="/company/branch/bsf/:companyId/:farmId/:appName" element={<FarmDetailWithParams />} />
           <Route path="/company/:id" element={<CompanyView />} />
           <Route path="/staff/:companyId" element={<StaffPage />} />
           <Route path="/authorities/:companyId" element={<AuthorityPage />} />
@@ -65,5 +67,21 @@ const BranchListWithToken: React.FC = () => {
 
   return <BranchList company={parseInt(companyId, 10)} />;
 };
+
+
+// Wrapper for dynamic route parameters
+const FarmDetailWithParams: React.FC = () => {
+  const { companyId, farmId, appName } = useParams<{ companyId: string; farmId: string; appName: string }>();
+  
+  if (!companyId) {
+    return <p>Invalid company ID.</p>;
+  }else if (!farmId) {
+    return <p>Invalid farm ID.</p>;
+  }
+  return <FarmDetail companyId={parseInt(companyId, 10)} farmId={parseInt(farmId, 10)} appName={appName || ''}/>
+
+  
+};
+
 
 export default App;

@@ -4,6 +4,32 @@ import axios from 'axios';
 import { RootState } from '../../store';
 import { backendURL } from '../../utils/Constant';
 
+
+  // Define the associated data type
+  interface AssociatedData {
+    id: number;
+    name: string;
+    status: string;
+    created_at: string;
+    address: string;
+  }
+
+
+interface Farm {
+    id: number;
+    name: string;
+    location: string;
+    background_image: string;
+    description: string;
+    status: string;
+    established_date: string;
+    associated_company: AssociatedData | null;
+  }
+
+
+  
+  
+
 interface CompanyState {
     name: string;
     description: string;
@@ -15,6 +41,8 @@ interface CompanyState {
     loading: boolean;
     error: string | null;
     newCompany: any | null; // Add a new field to store the newly added company data
+    farm: Farm | null;
+    
 }
 
 const initialState: CompanyState = {
@@ -28,6 +56,7 @@ const initialState: CompanyState = {
     loading: false,
     error: null,
     newCompany: null, // Initialize the new field
+    farm: null,
 };
 
 // Async thunk for adding a company

@@ -11,7 +11,7 @@ interface AddCompanyFormProps {
 
 const AddCompanyForm: React.FC<AddCompanyFormProps> = ({ onClose }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { name, description, phone, email, website, comments, status, loading, error, newCompany } = useSelector((state: RootState) => state.companies);
+  const { name, description, phone, email, website, comments, status, loading, error, newCompany, farm } = useSelector((state: RootState) => state.companies);
   const accessToken = useSelector((state: RootState) => state.auth.accessToken); // Assuming accessToken is stored in auth slice
 
   const [emailError, setEmailError] = useState<string | null>(null);
@@ -28,7 +28,7 @@ const AddCompanyForm: React.FC<AddCompanyFormProps> = ({ onClose }) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    dispatch(addCompany({ name, description, phone, email, website, comments, status, newCompany })).then(() => {
+    dispatch(addCompany({ name, description, phone, email, website, comments, status, newCompany, farm })).then(() => {
       if (onClose) {
         onClose();
       }
