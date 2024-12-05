@@ -50,3 +50,8 @@
     text-decoration: underline;
   }
   
+
+  .scrollable-container {
+    overflow: auto; /* Enable both vertical and horizontal scrolling as needed */
+  }
+  

@@ -1,29 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { backendURL } from '../../utils/Constant';
-
-// Define the associated data type
-interface AssociatedData {
-  id: number;
-  name: string;
-  status: string;
-  created_at: string;
-}
-
-
-interface Branch {
-  id: number;
-  name: string;
-  branch_id: number;
-  status: string;
-  appName: string;
-  modelName: string;
-  created_at: string;
-  associated_data: AssociatedData | null;
-}
+import { RootState } from "../../store";
+import { backendURL } from "../../utils/Constant"; // Adjust import path as needed
 
 interface BranchState {
-  branches: Branch[];
+  branches: any[];
   loading: boolean;
   error: string | null;
 }
@@ -34,24 +15,19 @@ const initialState: BranchState = {
   error: null,
 };
 
-// Async thunk to fetch branches
-export const fetchBranches = createAsyncThunk<
-  Branch[],
-  { accessToken: string; company: number },
-  { rejectValue: string }
->("branches/fetchBranches", async ({ accessToken, company }, { rejectWithValue }) => {
-  try {
-    const response = await axios.get(`${backendURL}/api/company/branches/?company=${company}`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
+// Async Thunk to fetch branches
+export const fetchBranches = createAsyncThunk(
+  "branches/fetchBranches",
+  async ({ accessToken, company }: { accessToken: string; company: number }) => {
+    const response = await axios.get(`${backendURL}/api/company/branches/`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+      params: { company, app_name: "bsf" }, // Include app_name in request
     });
-    return response.data; // Assuming the API returns an array of branches
-  } catch (error: any) {
-    return rejectWithValue(error.response?.data?.detail || "Failed to fetch branches");
+    return response.data;
   }
-});
+);
 
+// Slice
 const branchSlice = createSlice({
   name: "branches",
   initialState,
@@ -72,12 +48,16 @@ const branchSlice = createSlice({
       })
       .addCase(fetchBranches.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload || "An error occurred";
+        state.error = action.error.message || "Failed to fetch branches.";
       });
   },
 });
 
+// Selectors
+export const selectBranches = (state: RootState) => state.branches.branches;
+export const selectBranchesLoading = (state: RootState) => state.branches.loading;
+export const selectBranchesError = (state: RootState) => state.branches.error;
+
 export const { clearError } = branchSlice.actions;
+
 export default branchSlice.reducer;
-
-

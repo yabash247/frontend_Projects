@@ -43,3 +43,7 @@
     color: red;
   }
   
+  .scrollable-container {
+    overflow: auto; /* Enable both vertical and horizontal scrolling as needed */
+  }
+  

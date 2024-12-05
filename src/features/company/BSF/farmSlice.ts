@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { RootState } from '../../../store';
-import { backendURL } from '../../../utils/Constant'
+import { RootState } from "../../../store";
+import { backendURL } from "../../../utils/Constant";
 
 // Define the types for farm and associated company
 interface Company {
@@ -37,12 +37,18 @@ const initialState: FarmState = {
 // Async thunk to fetch farm details
 export const fetchFarmDetails = createAsyncThunk<
   Farm,
-  { accessToken: string; companyId: number; farmId: number; appName: string },
-  { rejectValue: string }
+  { companyId: number; farmId: number; appName: string },
+  { state: RootState; rejectValue: string }
 >(
-  
   "farm/fetchFarmDetails",
-  async ({ accessToken, companyId, farmId, appName }, { rejectWithValue }) => {
+  async ({ companyId, farmId, appName }, { getState, rejectWithValue }) => {
+    const state = getState() as RootState;
+    const accessToken = state.auth.accessToken;
+
+    if (!accessToken) {
+      return rejectWithValue("Access token is missing");
+    }
+
     try {
       const response = await axios.get(
         `${backendURL}/api/${appName}/branch/?company=${companyId}&farm=${farmId}`,
@@ -50,9 +56,14 @@ export const fetchFarmDetails = createAsyncThunk<
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
+          params: {
+            company: companyId,
+            farm: farmId,
+            app_name: appName,
+          },
         }
       );
-      return { ...response.data, appName }; // Assuming API returns farm details with associated company
+      return { ...response.data, appName }; // Ensure appName is included in the payload
     } catch (error: any) {
       return rejectWithValue(
         error.response?.data?.detail || "Failed to fetch farm details"
@@ -89,4 +100,3 @@ const farmSlice = createSlice({
 
 export const { clearError } = farmSlice.actions;
 export default farmSlice.reducer;
-

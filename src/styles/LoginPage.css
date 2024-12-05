@@ -8,7 +8,7 @@ body, html {
   align-items: center;
   font-family: 'Arial', sans-serif;
   background: linear-gradient(135deg, #89d4cf, #6e45e2);
-  overflow: hidden;
+  overflow: auto;
 }
 
 .login-page {
@@ -88,4 +88,9 @@ body, html {
 .login-button:active {
   transform: translateY(0);
   box-shadow: none;
+}
+
+
+.scrollable-container {
+  overflow: auto; /* Enable both vertical and horizontal scrolling as needed */
 }

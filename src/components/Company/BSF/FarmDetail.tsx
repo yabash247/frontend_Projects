@@ -12,9 +12,12 @@ import {
   Alert,
   Button,
   Modal,
+  Grid,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import StaffMemberList from "../../Company/StaffMemberList";
+import BatchTable from "../../Bsf/BatchTable";
+import BatchChart from "../../Bsf/BatchChart";
 
 interface FarmDetailProps {
   companyId: number;
@@ -24,14 +27,14 @@ interface FarmDetailProps {
 
 const FarmDetail: React.FC<FarmDetailProps> = ({ companyId, farmId, appName }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const navigate = useNavigate(); // To navigate programmatically
+  const navigate = useNavigate();
   const { farm, loading, error } = useSelector((state: RootState) => state.bsffarm);
   const accessToken = useSelector((state: RootState) => state.auth.accessToken);
   const [openModal, setOpenModal] = useState(false);
 
   useEffect(() => {
     if (accessToken) {
-      dispatch(fetchFarmDetails({ accessToken, companyId, farmId, appName }));
+      dispatch(fetchFarmDetails({ companyId, farmId, appName }));
     }
 
     return () => {
@@ -120,6 +123,15 @@ const FarmDetail: React.FC<FarmDetailProps> = ({ companyId, farmId, appName }) =
           <StaffMemberList />
         </Box>
       </Modal>
+
+      <Grid container spacing={3} sx={{ mt: 4 }}>
+        <Grid item xs={12}>
+          <BatchTable companyId={companyId} farmId={farmId} />
+        </Grid>
+        <Grid item xs={12}>
+          <BatchChart companyId={companyId} farmId={farmId} />
+        </Grid>
+      </Grid>
     </Box>
   );
 };

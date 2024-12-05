@@ -37,7 +37,7 @@ const BranchList: React.FC<BranchListProps> = ({ company }) => {
 
     if (accessToken) {
       dispatch(
-        fetchFarmDetails({ accessToken, companyId: company, farmId, appName: validatedAppName })
+        fetchFarmDetails({ companyId: company, farmId, appName: validatedAppName })
       );
     }
   };
@@ -105,4 +105,3 @@ const BranchList: React.FC<BranchListProps> = ({ company }) => {
 };
 
 export default BranchList;
-

@@ -1,16 +1,16 @@
-// src/store.ts
 import { configureStore } from '@reduxjs/toolkit';
 import companyReducer from './features/company/companySlice';
 import addCompanyReducer from './features/company/addCompanySlice';
 import branchReducer from './features/company/branchSlice';
-import staffMemberReducer from './features/company/staffMemberSlice'; // Import the staffMember slice
-import farmReducer  from './features/company/BSF/farmSlice';
+import staffMemberReducer from './features/company/staffMemberSlice';
+import farmReducer from './features/company/BSF/farmSlice';
 import staffReducer from './features/staff/staffSlice';
 import staffLevelReducer from './features/staff/staffLevelSlice';
 import addStaffReducer from './features/staff/addStaffSlice';
-import authReducer from './features/auth/authSlice'; // Import the auth slice
+import authReducer from './features/auth/authSlice';
 import userReducer from './features/user/userSlice';
-// Import other slices as needed
+import batchReducer from './features/bsf/batchSlice';
+import netUseStatsReducer from './features/bsf/netUseStatsSlice'; // Import the new reducer
 
 export const store = configureStore({
   reducer: {
@@ -19,13 +19,13 @@ export const store = configureStore({
     branches: branchReducer,
     bsffarm: farmReducer,
     staff: staffReducer,
-    staffMember: staffMemberReducer, // Add the staffMember reducer here
+    staffMember: staffMemberReducer,
     addStaff: addStaffReducer,
-    staffLevel: staffLevelReducer, // Correctly add the staffLevel reducer
-    auth: authReducer, // Add the auth slice
-    user: userReducer, // Add the user reducer here
-
-    // Add other reducers here
+    staffLevel: staffLevelReducer,
+    auth: authReducer,
+    user: userReducer,
+    batch: batchReducer,
+    netUseStats: netUseStatsReducer, // Add the new reducer
   },
 });
 
