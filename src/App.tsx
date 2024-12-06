@@ -18,6 +18,7 @@ import FarmDetail from './components/Company/BSF/FarmDetail';
 import BatchTable from './components/Bsf/BatchTable'; // Updated BatchTable import
 import BatchUpload from './components/Bsf/BatchUpload';
 import BatchDetailsModal from './components/Bsf/BatchDetailsModal';
+//import NetUseCreateForm from './features/bsf/NetUseStatsForm';
 
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -51,6 +52,10 @@ const App = () => (
           {/* Batch Routes */}
           <Route path="/batch/:companyId/:farmId/list" element={<BatchTableWithParams />} />
           <Route path="/batch/:companyId/:farmId/upload" element={<BatchUploadWithParams />} />
+         {/*  <Route
+            path="/batch/:companyId/:farmId/:batchId/create-net-use"
+            element={<NetUseCreateForm companyId={5} farmId={2} batchId={3} />}
+          />*/}
         </Route>
 
         <Route path="*" element={<Navigate to="/dashboard" replace />} />

@@ -10,7 +10,9 @@ import addStaffReducer from './features/staff/addStaffSlice';
 import authReducer from './features/auth/authSlice';
 import userReducer from './features/user/userSlice';
 import batchReducer from './features/bsf/batchSlice';
-import netUseStatsReducer from './features/bsf/netUseStatsSlice'; // Import the new reducer
+import netUseStatsReducer from './features/bsf/netUseStatsSlice';
+import netReducer from './features/bsf/netSlice'; // Import the new Net slice
+
 
 export const store = configureStore({
   reducer: {
@@ -25,7 +27,8 @@ export const store = configureStore({
     auth: authReducer,
     user: userReducer,
     batch: batchReducer,
-    netUseStats: netUseStatsReducer, // Add the new reducer
+    netUseStats: netUseStatsReducer,
+    nets: netReducer, // Add the new Net slice
   },
 });
 

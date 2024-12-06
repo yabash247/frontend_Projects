@@ -33,18 +33,69 @@ export const fetchNetUseStats = createAsyncThunk(
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       );
-      console.log(response.data);
-      
       return response.data;
     } catch (error: any) {
-      return rejectWithValue(
-        error.response?.data?.detail || 'Failed to fetch NetUseStats.'
-      );
+      return rejectWithValue(error.response?.data?.detail || 'Failed to fetch NetUseStats.');
     }
   }
 );
 
-// Slice
+// Async Thunk for creating NetUseStats
+export const netUseCreate = createAsyncThunk(
+  'netUseStats/netUseCreate',
+  async (
+    {
+      companyId,
+      farmId,
+      batchId,
+      netId,
+      layStart,
+      stats,
+      media,
+    }: {
+      companyId: number;
+      farmId: number;
+      batchId: number;
+      netId: number;
+      layStart: string;
+      stats: string;
+      media: { title: string; file: File; comments?: string }[];
+    },
+    { getState, rejectWithValue }
+  ) => {
+    const state = getState() as RootState;
+    const accessToken = state.auth.accessToken;
+
+    try {
+      const formData = new FormData();
+      formData.append('company', companyId.toString());
+      formData.append('farm', farmId.toString());
+      formData.append('batch', batchId.toString());
+      formData.append('net', netId.toString());
+      formData.append('lay_start', layStart);
+      formData.append('stats', stats);
+      media.forEach((item, index) => {
+        formData.append(`media[${index}][title]`, item.title);
+        formData.append(`media[${index}][file]`, item.file);
+        if (item.comments) {
+          formData.append(`media[${index}][comments]`, item.comments);
+        }
+      });
+
+      const response = await axios.post(`${backendURL}/api/bsf/net-use-stats/`, formData, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.detail || 'Failed to create NetUseStats.');
+    }
+  }
+);
+
 const netUseStatsSlice = createSlice({
   name: 'netUseStats',
   initialState,
@@ -64,6 +115,17 @@ const netUseStatsSlice = createSlice({
         state.netUseStats = action.payload;
       })
       .addCase(fetchNetUseStats.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(netUseCreate.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(netUseCreate.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(netUseCreate.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       });

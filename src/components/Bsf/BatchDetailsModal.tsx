@@ -16,7 +16,11 @@ import {
   FormLabel,
   CircularProgress,
   Alert,
+  MenuItem,
+  Select,
+  InputLabel,
 } from "@mui/material";
+import { SelectChangeEvent } from "@mui/material"; // Import SelectChangeEvent
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store";
 import {
@@ -25,10 +29,11 @@ import {
   selectNetUseStatsLoading,
   selectNetUseStatsError,
 } from "../../features/bsf/netUseStatsSlice";
+import NetUseCreateForm from "./NetUseStatsForm";
 
 interface BatchDetailsModalProps {
   open: boolean;
-  batch: any;
+  batch: any | null;
   onClose: () => void;
   companyId: number;
   farmId: number;
@@ -47,14 +52,30 @@ const BatchDetailsModal: React.FC<BatchDetailsModalProps> = ({
   const error = useSelector(selectNetUseStatsError);
 
   const [selectedOption, setSelectedOption] = useState<string>("batch_name");
+  const [selectedNet, setSelectedNet] = useState<string>("");
+  const [showNetUseCreateForm, setShowNetUseCreateForm] = useState<boolean>(
+    false
+  );
+
+  useEffect(() => {
+    if (selectedOption === "Laying" && batch?.id) {
+      dispatch(fetchNetUseStats({ companyId, farmId, batchId: batch.id }));
+    }
+  }, [selectedOption, batch, companyId, farmId, dispatch]);
 
   const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     setSelectedOption(value);
+  };
 
-    // Fetch NetUseStats when "Laying" is selected
-    if (value === "Laying" && batch) {
-      dispatch(fetchNetUseStats({ companyId, farmId, batchId: batch.id }));
+  const handleNetChange = (event: SelectChangeEvent<string>) => {
+    const value = event.target.value;
+    setSelectedNet(value);
+
+    if (value === "add") {
+      setShowNetUseCreateForm(true);
+    } else {
+      setShowNetUseCreateForm(false);
     }
   };
 
@@ -68,7 +89,7 @@ const BatchDetailsModal: React.FC<BatchDetailsModalProps> = ({
         role="presentation"
       >
         <Typography variant="h5" gutterBottom>
-          Batch : {batch ? batch.batch_name : "Batch Details"}
+          {batch?.batch_name || "Batch Details"}
         </Typography>
         <Divider />
         <Grid container spacing={2} sx={{ mt: 2 }}>
@@ -129,29 +150,63 @@ const BatchDetailsModal: React.FC<BatchDetailsModalProps> = ({
             <List>
               {selectedOption === "Laying" && (
                 <>
-                  {netUseStats ? (
+                  {netUseStats && netUseStats.net_use_stats?.length > 0 ? (
                     <>
-                      <ListItem>
-                        <ListItemText
-                          primary= {"NET: "+netUseStats.net_use_stats.net || "N/A"}
+                      <FormControl fullWidth>
+                        <InputLabel id="net-select-label">Select Net</InputLabel>
+                        <Select
+                          labelId="net-select-label"
+                          value={selectedNet}
+                          onChange={handleNetChange} // Updated to handle SelectChangeEvent
+                        >
+                          <MenuItem value="add">Add</MenuItem>
+                          {netUseStats.net_use_stats.map((net: any) => (
+                            <MenuItem key={net.id} value={net.id}>
+                              {net.net_name || `Net ${net.id}`}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+
+                      {selectedNet !== "add" && selectedNet && (
+                        <>
+                          {netUseStats.net_use_stats
+                            .filter((net: any) => net.id === Number(selectedNet))
+                            .map((net: any) => (
+                              <React.Fragment key={net.id}>
+                                <ListItem>
+                                  <ListItemText
+                                    primary="Lay Start"
+                                    secondary={net.lay_start || "N/A"}
+                                  />
+                                </ListItem>
+                                <ListItem>
+                                  <ListItemText
+                                    primary="Lay End"
+                                    secondary={net.lay_end || "N/A"}
+                                  />
+                                </ListItem>
+                                <ListItem>
+                                  <ListItemText
+                                    primary="Harvest Weight"
+                                    secondary={
+                                      net.harvest_weight
+                                        ? `${net.harvest_weight} grams`
+                                        : "N/A"
+                                    }
+                                  />
+                                </ListItem>
+                              </React.Fragment>
+                            ))}
+                        </>
+                      )}
+                      {selectedNet === "add" && (
+                        <NetUseCreateForm
+                          companyId={companyId}
+                          farmId={farmId}
+                          batchId={batch?.id || 0}
                         />
-                      </ListItem>
-                      <ListItem>
-                        <ListItemText
-                          primary="Lay End"
-                          secondary={netUseStats.lay_end || "N/A"}
-                        />
-                      </ListItem>
-                      <ListItem>
-                        <ListItemText
-                          primary="Harvest Weight"
-                          secondary={
-                            netUseStats.harvest_weight
-                              ? `${netUseStats.harvest_weight} grams`
-                              : "N/A"
-                          }
-                        />
-                      </ListItem>
+                      )}
                     </>
                   ) : (
                     <ListItem>
@@ -167,7 +222,7 @@ const BatchDetailsModal: React.FC<BatchDetailsModalProps> = ({
                 <ListItem>
                   <ListItemText
                     primary="Category"
-                    secondary={batch ? batch.category : "N/A"}
+                    secondary={batch?.category || "N/A"}
                   />
                 </ListItem>
               )}
@@ -175,7 +230,7 @@ const BatchDetailsModal: React.FC<BatchDetailsModalProps> = ({
                 <ListItem>
                   <ListItemText
                     primary="Status"
-                    secondary={batch ? batch.status : "N/A"}
+                    secondary={batch?.status || "N/A"}
                   />
                 </ListItem>
               )}
@@ -183,7 +238,7 @@ const BatchDetailsModal: React.FC<BatchDetailsModalProps> = ({
                 <ListItem>
                   <ListItemText
                     primary="Uploaded By"
-                    secondary={batch ? batch.uploaded_by : "N/A"}
+                    secondary={batch?.uploaded_by || "N/A"}
                   />
                 </ListItem>
               )}
