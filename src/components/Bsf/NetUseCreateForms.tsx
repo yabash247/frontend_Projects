@@ -35,11 +35,11 @@ interface NetUseCreateFormProps {
   batchId: number;
 }
 
-const NetUseCreateForm: React.FC<NetUseCreateFormProps> = ({ companyId, farmId, batchId }) => {
+const NetUseCreateForms: React.FC<NetUseCreateFormProps> = ({ companyId, farmId, batchId }) => {
   const dispatch = useDispatch<AppDispatch>();
   const nets = useSelector<RootState, Net[]>(selectNets);
   const [selectedNet, setSelectedNet] = useState<string>('');
-  const [selectedNetName, setSelectedNetName] = useState<string>(''); // Ensure string type
+  const [selectedNetName, setSelectedNetName] = useState<string>(''); // Display value for selected net
   const [layStart, setLayStart] = useState<string>(dayjs().format('YYYY-MM-DD'));
   const [stats, setStats] = useState<string>('ongoing');
   const [media, setMedia] = useState<Media[]>([]);
@@ -52,7 +52,7 @@ const NetUseCreateForm: React.FC<NetUseCreateFormProps> = ({ companyId, farmId, 
 
   const handleNetSelect = (id: string, name: string) => {
     setSelectedNet(id);
-    setSelectedNetName(name); // Ensure valid string value
+    setSelectedNetName(name);
   };
 
   const handleAddMedia = () => {
@@ -140,7 +140,7 @@ const NetUseCreateForm: React.FC<NetUseCreateFormProps> = ({ companyId, farmId, 
           </FormControl>
           {selectedNetName && (
             <Typography variant="body1" sx={{ mb: 2 }}>
-              Selected Net: {selectedNetName || 'None'}
+              Selected Net: {selectedNetName}
             </Typography>
           )}
           <TextField
@@ -155,6 +155,9 @@ const NetUseCreateForm: React.FC<NetUseCreateFormProps> = ({ companyId, farmId, 
             <InputLabel>Status</InputLabel>
             <Select value={stats} onChange={(e) => setStats(e.target.value)}>
               <MenuItem value="ongoing">Ongoing</MenuItem>
+              <MenuItem value="completed" disabled>
+                Completed
+              </MenuItem>
             </Select>
           </FormControl>
           <Divider sx={{ my: 2 }} />
@@ -201,7 +204,7 @@ const NetUseCreateForm: React.FC<NetUseCreateFormProps> = ({ companyId, farmId, 
             open={success}
             autoHideDuration={3000}
             onClose={() => setSuccess(false)}
-            message="Net Use successfully created!"
+            message="Net Use successfully submitted!"
           />
         </>
       )}
@@ -209,4 +212,4 @@ const NetUseCreateForm: React.FC<NetUseCreateFormProps> = ({ companyId, farmId, 
   );
 };
 
-export default NetUseCreateForm;
+export default NetUseCreateForms;

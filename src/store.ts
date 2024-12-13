@@ -10,8 +10,11 @@ import addStaffReducer from './features/staff/addStaffSlice';
 import authReducer from './features/auth/authSlice';
 import userReducer from './features/user/userSlice';
 import batchReducer from './features/bsf/batchSlice';
-import netUseStatsReducer from './features/bsf/netUseStatsSlice';
+import netUseStatsReducer from './features/bsf/netUseStatsSlices';
 import netReducer from './features/bsf/netSlice'; // Import the new Net slice
+import durationSettingsReducer from "./features/bsf/durationSettingsSlice";
+import EditNetUseStatsReducer from './features/bsf/EditNetUseStatsSlice';
+import bsfPondsReducer from './features/bsf/bsfPondsSlice';
 
 
 export const store = configureStore({
@@ -28,7 +31,10 @@ export const store = configureStore({
     user: userReducer,
     batch: batchReducer,
     netUseStats: netUseStatsReducer,
+    editNetUseStats: EditNetUseStatsReducer,
     nets: netReducer, // Add the new Net slice
+    bsfPonds: bsfPondsReducer,
+    durationSettings: durationSettingsReducer,
   },
 });
 

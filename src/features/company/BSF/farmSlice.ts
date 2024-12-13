@@ -3,11 +3,34 @@ import axios from "axios";
 import { RootState } from "../../../store";
 import { backendURL } from "../../../utils/Constant";
 
-// Define the types for farm and associated company
+// Define the types for company, pond, and associated farm
 interface Company {
   id: number;
   name: string;
-  address: string; // Add other fields as needed
+  address: string;
+}
+
+interface Pond {
+  id: number;
+  pond_name: string;
+  pond_type: string;
+  pond_use: string;
+  width: string;
+  length: string;
+  depth: string;
+  shape: string;
+  status: string;
+  comments: string;
+  created_date: string;
+  farm: number;
+  company: number;
+  created_by: number;
+}
+
+interface Media {
+  id: number;
+  title: string;
+  file: string;
 }
 
 interface Farm {
@@ -18,8 +41,12 @@ interface Farm {
   background_image: string;
   established_date: string;
   status: string;
-  associated_company: Company; // Add associated company
-  appName: string; // Add appName here
+  associated_company: Company;
+  appName: string;
+  pond?: {
+    pond: Pond;
+    associated_media: Media[];
+  }; // Added optional pond property
 }
 
 interface FarmState {
@@ -63,6 +90,7 @@ export const fetchFarmDetails = createAsyncThunk<
           },
         }
       );
+
       return { ...response.data, appName }; // Ensure appName is included in the payload
     } catch (error: any) {
       return rejectWithValue(

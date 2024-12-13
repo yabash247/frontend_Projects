@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchFarmDetails, clearError } from "../../../features/company/BSF/farmSlice";
+import { fetchBsfPonds, selectBsfPonds, selectBsfPondsStatus } from "../../../features/bsf/bsfPondsSlice";
 import { RootState, AppDispatch } from "../../../store";
 import {
   Box,
@@ -18,6 +19,7 @@ import { useNavigate } from "react-router-dom";
 import StaffMemberList from "../../Company/StaffMemberList";
 import BatchTable from "../../Bsf/BatchTable";
 import BatchChart from "../../Bsf/BatchChart";
+import PondModal from "../../Bsf/PondModal";
 
 interface FarmDetailProps {
   companyId: number;
@@ -30,7 +32,12 @@ const FarmDetail: React.FC<FarmDetailProps> = ({ companyId, farmId, appName }) =
   const navigate = useNavigate();
   const { farm, loading, error } = useSelector((state: RootState) => state.bsffarm);
   const accessToken = useSelector((state: RootState) => state.auth.accessToken);
-  const [openModal, setOpenModal] = useState(false);
+  const ponds = useSelector(selectBsfPonds);
+  const pondStatus = useSelector(selectBsfPondsStatus);
+
+  const [openStaffModal, setOpenStaffModal] = useState(false);
+  const [openPondModal, setOpenPondModal] = useState(false);
+  const [selectedPondId, setSelectedPondId] = useState<number | null>(null);
 
   useEffect(() => {
     if (accessToken) {
@@ -42,12 +49,25 @@ const FarmDetail: React.FC<FarmDetailProps> = ({ companyId, farmId, appName }) =
     };
   }, [dispatch, accessToken, companyId, farmId]);
 
-  const handleOpenModal = () => {
-    setOpenModal(true);
+  const handleOpenStaffModal = () => {
+    setOpenStaffModal(true);
   };
 
-  const handleCloseModal = () => {
-    setOpenModal(false);
+  const handleCloseStaffModal = () => {
+    setOpenStaffModal(false);
+  };
+
+  const handleOpenPondModal = (pondId: number | null = null) => {
+    setSelectedPondId(pondId);
+    setOpenPondModal(true);
+
+    // Fetch pond data dynamically when opening the modal.
+    dispatch(fetchBsfPonds({ farm: farmId, company: companyId }));
+  };
+
+  const handleClosePondModal = () => {
+    setOpenPondModal(false);
+    setSelectedPondId(null);
   };
 
   if (loading) return <CircularProgress />;
@@ -85,22 +105,30 @@ const FarmDetail: React.FC<FarmDetailProps> = ({ companyId, farmId, appName }) =
             <Typography variant="body2" color="text.secondary">
               Address: {farm.associated_company.address}
             </Typography>
-            <Button
-              variant="contained"
-              color="primary"
-              sx={{ mt: 2 }}
-              onClick={handleOpenModal}
-            >
-              View Staff Members
-            </Button>
+            <Box sx={{ mt: 2, display: "flex", gap: 2 }}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleOpenStaffModal}
+              >
+                View Staff Members
+              </Button>
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={() => handleOpenPondModal()}
+              >
+                View Pond Details
+              </Button>
+            </Box>
           </CardContent>
         </Card>
       )}
 
       {/* Modal to display StaffMemberList */}
       <Modal
-        open={openModal}
-        onClose={handleCloseModal}
+        open={openStaffModal}
+        onClose={handleCloseStaffModal}
         aria-labelledby="staff-member-list-modal"
         aria-describedby="modal-to-show-staff-members"
       >
@@ -121,6 +149,40 @@ const FarmDetail: React.FC<FarmDetailProps> = ({ companyId, farmId, appName }) =
             Staff Members
           </Typography>
           <StaffMemberList />
+        </Box>
+      </Modal>
+
+      {/* Modal to display PondModal */}
+      <Modal
+        open={openPondModal}
+        onClose={handleClosePondModal}
+        aria-labelledby="pond-modal"
+        aria-describedby="modal-to-show-pond-details"
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "80%",
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            p: 4,
+            borderRadius: 1,
+          }}
+        >
+          {pondStatus === "loading" && <CircularProgress />}
+          {pondStatus === "failed" && <Alert severity="error">Failed to load ponds.</Alert>}
+          {pondStatus === "succeeded" && ponds.length > 0 && (
+            <PondModal
+              isVisible={openPondModal}
+              onClose={handleClosePondModal}
+              farm={farmId}
+              company={companyId}
+              pondId={selectedPondId}
+            />
+          )}
         </Box>
       </Modal>
 

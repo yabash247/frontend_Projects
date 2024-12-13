@@ -20,27 +20,19 @@ const initialState: NetUseStatsState = {
 export const fetchNetUseStats = createAsyncThunk(
   'netUseStats/fetchNetUseStats',
   async (
-    {
-      companyId,
-      farmId,
-      batchId,
-      id,
-    }: { companyId: number; farmId: number; batchId: number; id?: number },
+    { companyId, farmId, batchId }: { companyId: number; farmId: number; batchId: number },
     { getState, rejectWithValue }
   ) => {
     const state = getState() as RootState;
     const accessToken = state.auth.accessToken;
 
     try {
-      // Build the query parameters dynamically
-      let url = `${backendURL}/api/bsf/net-use-stats/retrieve-all/?company=${companyId}&farm=${farmId}&batch=${batchId}`;
-      if (id !== undefined) {
-        url += `&id=${id}`;
-      }
-
-      const response = await axios.get(url, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      });
+      const response = await axios.get(
+        `${backendURL}/api/bsf/net-use-stats/${batchId}/?company=${companyId}&farm=${farmId}`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      );
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.detail || 'Failed to fetch NetUseStats.');
@@ -83,33 +75,32 @@ export const netUseCreate = createAsyncThunk(
       formData.append('lay_start', layStart);
       formData.append('stats', stats);
 
-      // Flatten the media array into individual keys for compatibility with Django backend
+      // Ensure files are added properly
       media.forEach((item, index) => {
-        formData.append(`media_title_${index}`, item.title);
-        formData.append(`media_file_${index}`, item.file);
+        formData.append(`media[${index}][title]`, item.title);
+        formData.append(`media[${index}][file]`, item.file); // Properly append file
         if (item.comments) {
-          formData.append(`media_comments_${index}`, item.comments);
+          formData.append(`media[${index}][comments]`, item.comments);
         }
       });
 
-      // Debugging: Uncomment to log formData keys and values
-      // for (const pair of formData.entries()) {
-      //   console.log(`${pair[0]}: ${pair[1]}`);
-      // }
-
+      console.log('Media being added to formData:', media);
+      console.log('Payload being sent:', formData);
       const response = await axios.post(`${backendURL}/api/bsf/net-use-stats/`, formData, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
-          'Content-Type': 'multipart/form-data',
+          'Content-Type': 'multipart/form-data', // Ensure correct encoding
         },
       });
 
       return response.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.detail || 'Failed to create NetUseStats.');
+      console.error('API error:', error.response?.data || error.message);
+      return rejectWithValue(error.response?.data || 'Failed to create NetUseStats.');
     }
   }
 );
+
 
 const netUseStatsSlice = createSlice({
   name: 'netUseStats',
